@@ -23,7 +23,9 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', [MainPageController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
-Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::get('/contact', [ContactController::class, 'index']);
+Route::get('/form', [ContactController::class, 'showContactForm']);
+Route::post('/form', [ContactController::class, 'submitForm']);
 Route::get('/trip', [TripsController::class, 'index'])->name('trip');
 
 Auth::routes();

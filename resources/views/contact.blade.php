@@ -13,5 +13,9 @@
         </ul>
         <p>Alternatively, you can use the contact form below to send us a message:</p>
        <!-- Contact Form -->
+       
+    
+    <p>Click <a href="{{ url('/form') }}">here</a> to contact us.</p>
+
     </div>
 @endsection
