@@ -10,4 +10,6 @@ class MainPageController extends Controller
     {
         return view('mainPage');
     }
+
+    
 }
