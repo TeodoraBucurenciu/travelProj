@@ -25,7 +25,13 @@
                 <a class="nav-link" href="{{url('/contact')}}">Contact Us</a>
             </li>
 
-            <!-- Right Side Of Navbar -->
+            <!-- For Admin Pages -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{url('/adminTrips')}}">TripsA</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{url('/adminBlog')}}">BlogA</a>
+            </li>
 
             <!-- Authentication Links -->
             @guest
@@ -46,6 +52,7 @@
                         {{ Auth::user()->name }}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ route('account') }}">My Account</a>    
                         <a class="dropdown-item" href="{{ route('logout') }}"
                             onclick="event.preventDefault();
                                             document.getElementById('logout-form').submit();">
@@ -55,6 +62,7 @@
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                             @csrf
                         </form>
+
                     </div>
                 </li>
             @endguest

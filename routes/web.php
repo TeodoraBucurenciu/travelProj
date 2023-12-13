@@ -7,6 +7,11 @@ use App\Http\Controllers\AboutController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\TripsController;
+use App\Http\Controllers\AdminTripsController;
+use App\Http\Controllers\AdminBlogController;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\AccountController;
+
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -27,6 +32,11 @@ Route::get('/contact', [ContactController::class, 'index']);
 Route::get('/form', [ContactController::class, 'showContactForm']);
 Route::post('/form', [ContactController::class, 'submitForm']);
 Route::get('/trip', [TripsController::class, 'index'])->name('trip');
+Route::get('/adminTrips', [AdminTripsController::class, 'index'])->name('adminTrips');
+Route::get('/adminBlog', [AdminBlogController::class, 'index'])->name('adminBlog');
+Route::get('/activity', [ActivityController::class, 'index'])->name('activity');
+Route::get('/account', [AccountController::class, 'index'])->name('account');
+Route::post('/account/update-email', [AccountController::class, 'updateEmail'])->name('account.updateEmail');
 
 Auth::routes();
 

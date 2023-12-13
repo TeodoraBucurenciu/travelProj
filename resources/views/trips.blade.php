@@ -4,7 +4,7 @@
 @section('content')
  <div class="container-fluid" style="margin: 0; padding: 0; background-image: url('{{ asset('images/back5.png')}}'); background-size: cover; background-position: center; height: 100vh;">
 
- <div class="row justify-content-center">
+    <div class="row justify-content-center">
         @php
             $cities = \App\Models\City::all()->shuffle()->take(5);
         @endphp
@@ -20,6 +20,10 @@
             </div>
         @endforeach
     </div>
+
+    <!--Activity button-->
+    <a href="{{ route('activity') }}" class="btn btn-primary">Explore Activities</a>
+    
 </div>
 @endsection
 
