@@ -22,6 +22,8 @@ class CityFactory extends Factory
         return [
             'name' => $cityName,
             'photo_url' => $this->getCityPhotoUrl($cityName),
+            'start_date' => now()->toDateString(), // Set to the current date
+            'end_date' => $this->faker->dateTimeBetween('now', '+1 year')->format('Y-m-d'),
         ];
     }
 

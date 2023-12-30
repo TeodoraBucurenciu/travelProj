@@ -52,7 +52,7 @@
                         {{ Auth::user()->name }}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ route('account') }}">My Account</a>    
+                        <a class="dropdown-item" href="{{ route('account') }}">My Account</a>
                         <a class="dropdown-item" href="{{ route('logout') }}"
                             onclick="event.preventDefault();
                                             document.getElementById('logout-form').submit();">
@@ -67,10 +67,26 @@
                 </li>
             @endguest
         </ul>
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+
+        
+
+      <form class="d-flex" action="{{ route('search')}}" method="get" role="search" >
+        <input class="form-control me-2" type="search" name="search" value="" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
+
+     
+      <div class="d-flex align-items-center">
+    <a href="{{ route('cart.index') }}" class="text-dark text-decoration-none">
+        <i class="bi bi-cart fs-4 mx-2"></i>
+    </a>
+</div>
+      
+
+
+     
+
+      
     </div>
   </div>
 </nav>

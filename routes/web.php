@@ -11,6 +11,12 @@ use App\Http\Controllers\AdminTripsController;
 use App\Http\Controllers\AdminBlogController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\CartController;
+
+// Other routes...
+
+Route::post('/cart/add-to-cart', [CartController::class, 'addToCart'])->name('cart.addToCart');
+
 
 use Illuminate\Support\Facades\Auth;
 
@@ -42,3 +48,12 @@ Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('admin/home', [HomeController::class, 'adminHome'])->name('admin.home')->middleware('is_admin');
+Route::get('/trip', [TripsController::class, 'index'])->name('trip');
+Route::get('/search', [TripsController::class, 'search'])->name('search');
+Route::get('/trip/{id}',[TripsController::class, 'show'])->name('trip.show');
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::delete('/cart/{id}', [CartController::class, 'delete'])->name('cart.delete');
+Route::post('/cart/add-to-cart', [CartController::class, 'addToCart'])->name('cart.addToCart');
+
+
+

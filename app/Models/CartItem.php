@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class City extends Model
+class CartItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name','photo_url','start_date'];
-
-
+    protected $fillable = ['name', 'start_date']; 
     
+
 }
