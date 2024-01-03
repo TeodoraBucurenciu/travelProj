@@ -12,10 +12,7 @@ use App\Http\Controllers\AdminBlogController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CartController;
-
-// Other routes...
-
-Route::post('/cart/add-to-cart', [CartController::class, 'addToCart'])->name('cart.addToCart');
+use App\Http\Controllers\PaymentController;
 
 
 use Illuminate\Support\Facades\Auth;
@@ -43,6 +40,13 @@ Route::get('/adminBlog', [AdminBlogController::class, 'index'])->name('adminBlog
 Route::get('/activity', [ActivityController::class, 'index'])->name('activity');
 Route::get('/account', [AccountController::class, 'index'])->name('account');
 Route::post('/account/update-email', [AccountController::class, 'updateEmail'])->name('account.updateEmail');
+Route::get('/trip/activity', [TripsController::class, 'index'])->name('trip.activity');
+Route::get('/activity/{id}', [ActivityController::class, 'show'])->name('activity.show');
+Route::post('/cart', [ActivityController::class, 'addToCart'])->name('cart');
+Route::post('/addtocart/{activityId}', [ActivityController::class, 'addToCart'])->name('addtocart');
+Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('processPayment');
+
+Route::get('/confirmation', 'ConfirmationController@show')->name('confirmation.show');
 
 Auth::routes();
 
@@ -50,10 +54,8 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('admin/home', [HomeController::class, 'adminHome'])->name('admin.home')->middleware('is_admin');
 Route::get('/trip', [TripsController::class, 'index'])->name('trip');
 Route::get('/search', [TripsController::class, 'search'])->name('search');
-Route::get('/trip/{id}',[TripsController::class, 'show'])->name('trip.show');
-Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-Route::delete('/cart/{id}', [CartController::class, 'delete'])->name('cart.delete');
-Route::post('/cart/add-to-cart', [CartController::class, 'addToCart'])->name('cart.addToCart');
-
+Route::get('/cart', [CartController::class, 'index'])->name('cart');
+Route::delete('/cart/delete/{id}', [CartController::class, 'delete'])->name('cart.delete');
+Route::post('/process-payment/confirmation', [PaymentController::class, 'confirmation'])->name('process-payment.confirmation');
 
 

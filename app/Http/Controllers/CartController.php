@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CartItem;
-use Carbon\Carbon;
 
 class CartController extends Controller
 {
@@ -17,31 +16,39 @@ class CartController extends Controller
         return view('cart', ['cartItems' => $cartItems, 'cartItemCount' => $cartItemCount]);
     }
 
-    public function delete(Request $request, $id)
+    public function show()
     {
-        // Find the cart item by ID and delete it
-        $cartItem = CartItem::find($id);
+        $cartItems = CartItem::all();
 
-        if ($cartItem) {
-            $cartItem->delete();
+        // Calculate total price
+        $totalPrice = 0;
+        foreach ($cartItems as $cartItem) {
+            $totalPrice += $cartItem->calculateTotal();
         }
 
-        return redirect()->route('cart.index')->with('message', 'Item deleted successfully');
+        return view('cart', [
+            'cartItems' => $cartItems,
+            'totalPrice' => $totalPrice,
+        ]);
     }
 
-    public function addToCart(Request $request)
-{
-    $startDate = Carbon::createFromFormat('m/d/Y', $request->input('start_date'))->format('Y-m-d');
+    public function delete(Request $request, $id)
+    {
+        // Get the item details before removing it
+        $itemToDelete = CartItem::find($id);
 
-    // Create the cart item
-    $cartItem = CartItem::create([
-        'name' => $request->input('name'),
-        'start_date' => $startDate,
-        // Add other fields as needed
-    ]);
+        if (!$itemToDelete) {
+            return response()->json(['success' => false, 'message' => 'Item not found.']);
+        }
 
-    // Perform any additional logic, such as associating the item with a user, etc.
+        // Delete the item from the database
+        $itemToDelete->delete();
 
-    return redirect()->route('cart.index')->with('message', 'Item added to the cart successfully');
-}
+        // Remove the item from the session (if applicable)
+        // Update this part based on how your cart items are stored
+
+        return response()->json(['success' => true, 'message' => 'Item deleted successfully.']);
+    }
+    
+    
 }

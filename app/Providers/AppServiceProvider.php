@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Faker\Factory as FakerFactory;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,5 +22,12 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    
+    public function boot()
+    {
+        $this->app->singleton(\Faker\Generator::class, function () {
+            $faker = FakerFactory::create();
+            $faker->addProvider(new \App\Providers\CityActivityProvider($faker));
+            return $faker;
+        });
+    }
 }

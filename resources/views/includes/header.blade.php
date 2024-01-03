@@ -77,7 +77,7 @@
 
      
       <div class="d-flex align-items-center">
-    <a href="{{ route('cart.index') }}" class="text-dark text-decoration-none">
+    <a href="{{ route('cart') }}" class="text-dark text-decoration-none">
         <i class="bi bi-cart fs-4 mx-2"></i>
     </a>
 </div>

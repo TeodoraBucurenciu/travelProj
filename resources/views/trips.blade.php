@@ -10,7 +10,7 @@
         @foreach($cities as $city)
             <div class="col-md-4 mb-4">
                 <div class="card" style="width: 100%; max-width: 300px; margin: 0 auto;">
-                    <a href="{{ route('trip.show', ['id' => $city->id]) }}">
+                    <a href="{{ route('activity') }}">
                         <img src="{{ asset($city->photo_url) }}" class="card-img-top img-fluid" alt="{{ $city->name }}">
                         <div class="card-body">
                             <h5 class="card-title">{{ $city->name }}</h5>
