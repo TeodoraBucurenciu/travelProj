@@ -13,6 +13,7 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ConfirmationController;
 
 
 use Illuminate\Support\Facades\Auth;
@@ -46,7 +47,6 @@ Route::post('/cart', [ActivityController::class, 'addToCart'])->name('cart');
 Route::post('/addtocart/{activityId}', [ActivityController::class, 'addToCart'])->name('addtocart');
 Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('processPayment');
 
-Route::get('/confirmation', 'ConfirmationController@show')->name('confirmation.show');
 
 Auth::routes();
 
@@ -59,3 +59,4 @@ Route::delete('/cart/delete/{id}', [CartController::class, 'delete'])->name('car
 Route::post('/process-payment/confirmation', [PaymentController::class, 'confirmation'])->name('process-payment.confirmation');
 
 
+Route::get('/confirmation', [ConfirmationController::class, 'show'])->name('confirmation.page');
