@@ -43,9 +43,6 @@ Route::get('/account', [AccountController::class, 'index'])->name('account');
 Route::post('/account/update-email', [AccountController::class, 'updateEmail'])->name('account.updateEmail');
 Route::get('/trip/activity', [TripsController::class, 'index'])->name('trip.activity');
 Route::get('/activity/{id}', [ActivityController::class, 'show'])->name('activity.show');
-Route::post('/cart', [ActivityController::class, 'addToCart'])->name('cart');
-Route::post('/addtocart/{activityId}', [ActivityController::class, 'addToCart'])->name('addtocart');
-Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('processPayment');
 
 
 Auth::routes();
@@ -54,9 +51,17 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('admin/home', [HomeController::class, 'adminHome'])->name('admin.home')->middleware('is_admin');
 Route::get('/trip', [TripsController::class, 'index'])->name('trip');
 Route::get('/search', [TripsController::class, 'search'])->name('search');
-Route::get('/cart', [CartController::class, 'index'])->name('cart');
-Route::delete('/cart/delete/{id}', [CartController::class, 'delete'])->name('cart.delete');
-Route::post('/process-payment/confirmation', [PaymentController::class, 'confirmation'])->name('process-payment.confirmation');
+Route::get('/cart', 'ActivityController@cart')->name('cart');
+Route::get('/add-to-cart/{product}', 'ActivityController@addToCart')->name('add-cart');
+Route::get('/remove/{id}', 'ActivityController@removeFromCart')->name('remove');
 
+Route::get('/change-qty/{product}', "ActivityController@changeQty")->name('change_qty');
 
-Route::get('/confirmation', [ConfirmationController::class, 'show'])->name('confirmation.page');
+Route::controller(PaymentController::class)
+    ->prefix('paypal')
+    ->group(function () {
+        Route::view('payment', 'paypal.index')->name('create.payment');
+        Route::get('handle-payment', 'handlePayment')->name('make.payment');
+        Route::get('cancel-payment', 'paymentCancel')->name('cancel.payment');
+        Route::get('payment-success', 'paymentSuccess')->name('success.payment');
+    });

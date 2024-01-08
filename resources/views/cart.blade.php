@@ -1,95 +1,96 @@
-<!-- cart.blade.php -->
-
 @extends('layouts.app')
-
 @section('content')
     <div class="container">
-        <h2>Shopping Cart</h2>
-
-        <table class="table table-striped">
-            <thead>
+        <h1 class="text-center">Cart Page</h1>
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Start Date</th>
-                    <!-- Add other columns as needed -->
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Delete</th>
+                    <th width="50%">Product</th>
+                    <th width="10%">Price</th>
+                    <th width="8%">Quantity</th>
+                    <th width="22%">Sub Total</th>
+                    <th width="10%"></th>
                 </tr>
-            </thead>
-            <tbody>
-            @foreach($cartItems as $index => $item)
+                </thead>
+                <tbody>
+                @php $total = 0; @endphp
+                @if(session('cart'))
+                    @foreach(session('cart') as $id => $activity)
+                        @php
+                            $sub_total = $activity['price'] * $activity['quantity'];
+                            $total += $sub_total;
+                        @endphp
+                        <tr>
+                            <td>
+                                <img
+                                    src="{{$activity['image']}}"
+                                    alt="{{$activity['name']}}"
+                                    class="img-fluid"
+                                    width="150"
+                                >
+                                <span>{{$activity['name']}}</span>
+                            </td>
+                            <td>₹{{$activity['price']}}</td>
+                            <td>
+                                <form action="{{route('change_qty', $id)}}" class="d-flex">
+                                    <button
+                                        type="submit"
+                                        value="down"
+                                        name="change_to"
+                                        class="btn btn-danger"
+                                    >
+                                        @if($activity['quantity'] === 1) x @else - @endif
+                                    </button>
+                                    <input
+                                        type="number"
+                                        value="{{$activity['quantity']}}"
+                                        disabled>
+                                    <button
+                                        type="submit"
+                                        value="up"
+                                        name="change_to"
+                                        class="btn btn-success"
+                                    >
+                                        +
+                                    </button>
+                                </form>
+                            </td>
+                            <td>₹{{$sub_total}}</td>
+                            <td>
+                                <a href="{{route('remove', [$id])}}" class="btn btn-danger btn-sm">X</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                @endif
+                </tbody>
+                <tfoot>
                 <tr>
-        <th scope="row">{{ $index + 1 }}</th>
-        <td>{{ $item['name'] }}</td>
-        <td>{{ $item['start_date'] }}</td>
-        <td>
-            <!-- Add a form for the delete action -->
-            <form action="{{ route('cart.delete', ['id' => $index]) }}" method="POST">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
-        </td>
-    </tr>
-@endforeach
-            </tbody>
-        </table>
+                    <td>
+                        <a href="{{route('products')}}"
+                           class="btn btn-warning"
+                        >Continue Shopping</a>
+                        <form action="{{route('pay')}}" method="post">
+                            @csrf
+                            <input type="hidden" name="amount" value="{{$total}}">
+                            <button type="submit"
+                                    class="btn btn-success"
+                            >Proceed to Pay
+                            </button>
+                            <button type="submit"
+                                    class="btn btn-warning"
+                                    name="gateway"
+                                    value="paypal"
+                            >Proceed with Paypal
+                            </button>
+                        </form>
 
-       
-        
-        <form action="{{ route('processPayment') }}" method="post" id="payment-form">
-        @csrf
-        <!-- Add form fields for card information -->
-        <div id="card-element"></div>
-        <!-- Used to display form errors -->
-        <div id="card-errors" role="alert"></div>
-        <button id="checkoutButton">Checkout</button>
-    </form>
+                    </td>
+                    <td colspan="2"></td>
+                    <td><strong>Total ₹{{$total}}</strong></td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
     </div>
-
-
-    <script>
-    $(document).ready(function() {
-        var stripe = Stripe('pk_test_51OUISpIRAemRWZSzkD849Xn9eyeZZnG5rGJrVAoO7dUZU3AjwZiQ1vfRyQv261kPFg58s7Q1g44MXepjf35qe5d000XVrgm9gY');
-
-        $('#checkoutButton').click(function() {
-            // Perform AJAX request to process payment
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("processPayment") }}',
-                data: {/* Include any necessary data for the payment */},
-                success: function(response) {
-                    // Use response.clientSecret to confirm the payment on the client side
-                    handlePaymentConfirmation(response.clientSecret);
-                },
-                error: function(error) {
-                    // Handle errors
-                    console.error('Error processing payment:', error.responseJSON.error);
-                }
-            });
-        });
-
-        function handlePaymentConfirmation(clientSecret) {
-            // Use Stripe.js to confirm the payment on the client side
-            stripe.confirmCardPayment(clientSecret, {
-                payment_method: {
-                    card: {
-                        // Add card details if needed
-                    }
-                }
-            }).then(function(result) {
-                if (result.error) {
-                    // Handle payment confirmation failure
-                    console.error('Payment confirmation failed:', result.error.message);
-                } else {
-                    // Payment confirmed successfully
-                    console.log('Payment confirmed:', result.paymentIntent);
-                    // Redirect or show success message as needed
-                }
-            });
-        }
-    });
-</script>
-
 @endsection

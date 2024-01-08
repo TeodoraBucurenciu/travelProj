@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Activity;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\CartItem;
+
 
 class ActivityController extends Controller
 {
@@ -51,34 +50,68 @@ class ActivityController extends Controller
     return view('activity.show', compact('activity', 'startDate', 'endDate'));
 }
 
-    public function addToCart(Request $request, $activityId)
+    public function addToCart(Activity $activity)
     {
-        // Retrieve the activity details based on $activityId
-        $activity = Activity::find($activityId);
-    
-        // Validate the request
-        $request->validate([
-            'start_date' => 'required|date',
-            'quantity' => 'required|integer|min:1',
-            'price' => 'required|numeric|min:0', // Add validation for price
-            // Add other validation rules as needed
-        ]);
-    
-        // Add the activity to the cart
-        $cartItem = new CartItem([
-            'name' => $activity->name,
-            'start_date' => $request->start_date,
-            'quantity' => $request->input('quantity', 1),
-            'price' => $request->price, // Use the price from the form
-            // Add other fields as needed
-        ]);
-    
-        // Save the cart item to the database
-        $cartItem->save();
-    
-        // Redirect or return a response as needed
-        return redirect()->route('cart')->with('success', 'Activity added to cart successfully.');
+        $cart = session()->get('cart');
+        if (!$cart) {
+            $cart = [$activity->id => $this->sessionData($activity)];
+            return $this->setSessionAndReturnResponse($cart);
+        }
+        if (isset($cart[$activity->id])) {
+            $cart[$activity->id]['quantity']++;
+            return $this->setSessionAndReturnResponse($cart);
+        }
+        $cart[$activity->id] = $this->sessionData($activity);
+        return $this->setSessionAndReturnResponse($cart);
     }
     
+    public function changeQty(Request $request, Activity $activity)
+    {
+        $cart = session()->get('cart');
+        if ($request->change_to === 'down') {
+            if (isset($cart[$activity->id])) {
+                if ($cart[$activity->id]['quantity'] > 1) {
+                    $cart[$activity->id]['quantity']--;
+                    return $this->setSessionAndReturnResponse($cart);
+                } else {
+                    return $this->removeFromCart($activity->id);
+                }
+            }
+        } else {
+            if (isset($cart[$activity->id])) {
+                $cart[$activity->id]['quantity']++;
+                return $this->setSessionAndReturnResponse($cart);
+            }
+        }
+
+        return back();
+    }
+
+    public function removeFromCart($id)
+    {
+        $cart = session()->get('cart');
+
+        if (isset($cart[$id])) {
+            unset($cart[$id]);
+            session()->put('cart', $cart);
+        }
+        return redirect()->back()->with('success', "Removed from Cart");
+    }
+
+    protected function sessionData(Activity $activity)
+    {
+        return [
+            'name' => $activity->name,
+            'quantity' => 1,
+            'price' => $activity->price,
+            'image' => $activity->image
+        ];
+    }
+
+    protected function setSessionAndReturnResponse($cart)
+    {
+        session()->put('cart', $cart);
+        return redirect()->route('cart')->with('success', "Added to Cart");
+    }
 
 }
