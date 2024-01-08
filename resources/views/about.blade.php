@@ -24,5 +24,5 @@ Laravel Programming Lab. | About Page
 
         <h3 class="text-md-left text-lg-left text-xl-left">Originals by WorldWide</h3>
         <p class="text-md-left text-lg-left text-xl-left">Experience the world more deeply with Originals by WorldWide, a collection of our most immersive and unforgettable experiences yet. Unlock the door to the Sistine Chapel before anyone else is allowed inside, dig into hidden restaurants on a tour led by your favorite Instagram foodie, or step onto the playing field and behind the scenes with sports legends.</p>
-    </div>
+</div>
 @endsection
