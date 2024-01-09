@@ -19,13 +19,13 @@ class UserFactory extends Factory
     {
         $faker = \Faker\Factory::create();
 
-$uniqueEmail = $faker->unique()->safeEmail;
+        $uniqueEmail = $faker->unique()->safeEmail;
 
         return [
             'name' => $this->faker->name(),
             'email' => $uniqueEmail,
             'email_verified_at' => now(),
-            'is_admin' => $this->faker->randomElement([true,false]),
+            'is_admin' => $this->faker->randomElement([true, false]),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
         ];

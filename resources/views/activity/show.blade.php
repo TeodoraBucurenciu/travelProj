@@ -23,7 +23,6 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            @foreach($activity as $activity)
                             <div class="card">
                                 <div class="card-header">
                                     {{$activity->name}}
@@ -33,14 +32,21 @@
                                     <p>{!! $activity->description !!}</p>
                                 </div>
                                 <div class="card-footer">
-                                    <a href="{{route('add-cart', [$activity->id])}}" class="btn btn-success btn-block">Add To Cart</a>
+                                    <!-- Pass both the activity ID and quantity to the cart route -->
+                                    <form action="{{ route('cart') }}" method="post">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $activity->id }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <button type="submit" class="btn btn-success btn-block">Add To Cart</button>
+                                    </form>
+
                                 </div>
                             </div>
-                            @endforeach
                         </div>
                     </div>
                 </div>
             </div>
-
-
-            @endsection
+        </div>
+    </div>
+</div>
+@endsection

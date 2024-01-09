@@ -11,44 +11,46 @@ class ActivityController extends Controller
 {
     public function index()
     {
-        $activity = Activity::all()->shuffle()->take(5);
 
-        return view('activity', ['searchProduct' => $activity]);
+        return view('activity');
+        //$activity = Activity::all()->shuffle()->take(5);
+
+        //return view('activity', ['searchProduct' => $activity]);
     }
 
     public function search(Request $request)
     {
 
-        if($request->search){
+        if ($request->search) {
 
-            $searchResults = Activity::where('name', 'like', '%'.$request->search.'%')->latest()->paginate(15);
+            $searchResults = Activity::where('name', 'like', '%' . $request->search . '%')->latest()->paginate(15);
 
             return view('search', ['searchProduct' => $searchResults]);
-        }else {
+        } else {
 
-            return redirect()->back()->with('message','Empty Search');
+            return redirect()->back()->with('message', 'Empty Search');
         }
         // Perform a search query based on the city name
-       
+
     }
 
     public function show($id)
-{
-    $activity = Activity::find($id);
+    {
+        $activity = Activity::find($id);
 
-    // Check if $activity is not null
-    if (!$activity) {
-        abort(404); // or handle the case where the activity is not found
+        // Check if $activity is not null
+        if (!$activity) {
+            abort(404); // or handle the case where the activity is not found
+        }
+
+        // Assign a fake price to the activity
+        $activity->fake_price = 100; // You can replace this with a dynamic or random value
+
+        $startDate = now()->format('Y-m-d');
+        $endDate = now()->addYear()->format('Y-m-d');
+
+        return view('activity.show', compact('activity', 'startDate', 'endDate'));
     }
-
-    // Assign a fake price to the activity
-    $activity->fake_price = 100; // You can replace this with a dynamic or random value
-
-    $startDate = now()->format('Y-m-d');
-    $endDate = now()->addYear()->format('Y-m-d');
-
-    return view('activity.show', compact('activity', 'startDate', 'endDate'));
-}
 
     public function addToCart(Activity $activity)
     {
@@ -62,9 +64,9 @@ class ActivityController extends Controller
             return $this->setSessionAndReturnResponse($cart);
         }
         $cart[$activity->id] = $this->sessionData($activity);
-        return $this->setSessionAndReturnResponse($cart);
+        return redirect()->route('cart.index');
     }
-    
+
     public function changeQty(Request $request, Activity $activity)
     {
         $cart = session()->get('cart');
@@ -113,5 +115,4 @@ class ActivityController extends Controller
         session()->put('cart', $cart);
         return redirect()->route('cart')->with('success', "Added to Cart");
     }
-
 }

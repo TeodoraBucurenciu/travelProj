@@ -51,9 +51,9 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('admin/home', [HomeController::class, 'adminHome'])->name('admin.home')->middleware('is_admin');
 Route::get('/trip', [TripsController::class, 'index'])->name('trip');
 Route::get('/search', [TripsController::class, 'search'])->name('search');
-Route::get('/cart', 'ActivityController@cart')->name('cart');
-Route::get('/add-to-cart/{product}', 'ActivityController@addToCart')->name('add-cart');
-Route::get('/remove/{id}', 'ActivityController@removeFromCart')->name('remove');
+Route::post('/cart', [CartController::class, 'index'])->name('cart');
+Route::get('/add-cart/{activity}', [ActivityController::class, 'addToCart'])->name('add-cart');
+Route::get('/remove/{id}', [ActivityController::class, 'removeFromCar'])->name('remove');
 
 Route::get('/change-qty/{product}', "ActivityController@changeQty")->name('change_qty');
 

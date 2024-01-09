@@ -7,9 +7,9 @@ use App\Models\CartItem;
 
 class CartController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Retrieve cart items from the database
+        
         $cartItems = CartItem::all();
         $cartItemCount = $cartItems->count();
 
@@ -49,6 +49,8 @@ class CartController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Item deleted successfully.']);
     }
+
+   
     
     
 }
