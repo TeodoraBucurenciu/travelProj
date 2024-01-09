@@ -1,26 +1,29 @@
 <?php
 
 namespace Database\Seeders;
-use Illuminate\Database\Seeder;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\City;
+use App\Models\Activity;
 
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Run the database seeds.
      *
      * @return void
      */
     public function run()
     {
-        \App\Models\User::factory(100)->create();
 
-        \App\Models\City::truncate();
-        \App\Models\City::factory(100)->create();
+        User::factory(100)->create();
 
-        \App\Models\Activity::factory(1000)->create();
+        City::truncate();
+        City::factory(100)->create();
 
-        
-        
+        Activity::truncate();
+        Activity::factory(100)->create();
     }
 }

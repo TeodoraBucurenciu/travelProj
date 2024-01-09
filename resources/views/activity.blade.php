@@ -9,16 +9,17 @@
         @endphp
 
         @foreach ($randomActivities as $activity)
-            <div class="col-md-4 mb-4">
-                <div class="card" style="width: 100%; max-width: 300px; margin: 0 auto;">
-                    <a href="{{ route('activity.show', ['id' => $activity->id]) }}">
-                        <img src="{{ asset($activity->photo_url) }}" class="card-img-top img-fluid" alt="{{ $activity->name }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $activity->name }}</h5>
-                        </div>
-                    </a>
+        <div class="col-md-3 col-6 mb-4">
+            <div class="card">
+                <img src="{{ asset('images/activity.jpeg') }}" class="card-img-top"/>
+                <div class="card-body">
+                    <h4 class="card-title">{{ $activity->name }}</h4>
+                    <p>{{ $activity->author }}</p>
+                    <p class="card-text"><strong>Price: </strong> ${{ $activity->price }}</p>
+                    <p class="btn-holder"><a href="{{ route('addactivity.to.cart', $activity->id) }}" class="btn btn-outline-danger">Add to cart</a> </p>
                 </div>
             </div>
+        </div>
         @endforeach
     </div>
 </div>

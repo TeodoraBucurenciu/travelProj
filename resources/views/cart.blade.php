@@ -1,95 +1,93 @@
-<!-- cart.blade.php -->
-
 @extends('layouts.app')
-
 @section('content')
-    <div class="container">
-        <h2>Shopping Cart</h2>
-
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Start Date</th>
-                    <!-- Add other columns as needed -->
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Delete</th>
+<table id="cart" class="table table-bordered">
+    <thead>
+        <tr>
+            <th>activity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @php $total = 0 @endphp
+        @if(session('cart'))
+            @foreach(session('cart') as $id => $details)
+                @php $total += $details['price'] * $details['quantity'] @endphp
+                <tr data-id="{{ $id }}">
+                    <td data-th="Activity">
+                        <div class="row">
+                            <div class="col-sm-3 hidden-xs"><img src="{{ asset('imgages/activity.jpeg') }}" width="100" height="100" class="img-responsive"/></div>
+                            <div class="col-sm-9">
+                                <h4 class="nomargin">{{ $details['name'] }}</h4>
+                            </div>
+                        </div>
+                    </td>
+                    <td data-th="Price">${{ $details['price'] }}</td>
+                    <td data-th="Quantity">
+                        <input type="number" value="{{ $details['quantity'] }}" class="form-control quantity cart_update" min="1" />
+                    </td>
+                    <td data-th="Subtotal" class="text-center">${{ $details['price'] * $details['quantity'] }}</td>
+                    <td class="actions" data-th="">
+                        <button class="btn btn-danger btn-sm cart_remove"><i class="fa fa-trash-o"></i> Delete</button>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-            @foreach($cartItems as $index => $item)
-                <tr>
-        <th scope="row">{{ $index + 1 }}</th>
-        <td>{{ $item['name'] }}</td>
-        <td>{{ $item['start_date'] }}</td>
-        <td>
-            <!-- Add a form for the delete action -->
-            <form action="{{ route('cart.delete', ['id' => $index]) }}" method="POST">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
-        </td>
-    </tr>
-@endforeach
-            </tbody>
-        </table>
+            @endforeach
+        @endif
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5" style="text-align:right;"><h3><strong>Total ${{ $total }}</strong></h3></td>
+        </tr>
+        <tr>
+            <td colspan="5" style="text-align:right;">
+                <form action="/session" method="POST">
+                <a href="{{ url('/') }}" class="btn btn-danger"> <i class="fa fa-arrow-left"></i> Continue Shopping</a>
+                <input type="hidden" name="_token" value="{{csrf_token()}}">
+                <button class="btn btn-success" type="submit" id="checkout-live-button"><i class="fa fa-money"></i> Checkout</button>
+                </form>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+@endsection
 
-       
-        
-        <form action="{{ route('processPayment') }}" method="post" id="payment-form">
-        @csrf
-        <!-- Add form fields for card information -->
-        <div id="card-element"></div>
-        <!-- Used to display form errors -->
-        <div id="card-errors" role="alert"></div>
-        <button id="checkoutButton">Checkout</button>
-    </form>
-    </div>
-
-
-    <script>
-    $(document).ready(function() {
-        var stripe = Stripe('pk_test_51OUISpIRAemRWZSzkD849Xn9eyeZZnG5rGJrVAoO7dUZU3AjwZiQ1vfRyQv261kPFg58s7Q1g44MXepjf35qe5d000XVrgm9gY');
-
-        $('#checkoutButton').click(function() {
-            // Perform AJAX request to process payment
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("processPayment") }}',
-                data: {/* Include any necessary data for the payment */},
-                success: function(response) {
-                    // Use response.clientSecret to confirm the payment on the client side
-                    handlePaymentConfirmation(response.clientSecret);
-                },
-                error: function(error) {
-                    // Handle errors
-                    console.error('Error processing payment:', error.responseJSON.error);
-                }
-            });
+@section('scripts')
+<script type="text/javascript">
+    $(".edit-cart-info").change(function(e) {
+        e.preventDefault();
+        var ele = $(this);
+        $.ajax({
+            url: '{{ route('update.sopping.cart') }}',
+            method: "patch",
+            data: {
+                _token: '{{ csrf_token() }}',
+                id: ele.parents("tr").attr("rowId"),
+            },
+            success: function(response) {
+                window.location.reload();
+            }
         });
+    });
 
-        function handlePaymentConfirmation(clientSecret) {
-            // Use Stripe.js to confirm the payment on the client side
-            stripe.confirmCardPayment(clientSecret, {
-                payment_method: {
-                    card: {
-                        // Add card details if needed
-                    }
-                }
-            }).then(function(result) {
-                if (result.error) {
-                    // Handle payment confirmation failure
-                    console.error('Payment confirmation failed:', result.error.message);
-                } else {
-                    // Payment confirmed successfully
-                    console.log('Payment confirmed:', result.paymentIntent);
-                    // Redirect or show success message as needed
+    $(".delete-activity").click(function(e) {
+        e.preventDefault();
+
+        var ele = $(this);
+
+        if (confirm("Do you really want to delete?")) {
+            $.ajax({
+                url: '{{ route('delete.cart.activity')}}',
+                method: "DELETE",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: ele.parents("tr").attr("rowId")
+                },
+                success: function(response) {
+                    window.location.reload();
                 }
             });
         }
     });
 </script>
-
 @endsection

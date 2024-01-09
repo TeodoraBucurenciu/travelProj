@@ -27,12 +27,12 @@ class ActivityFactory extends Factory
             'Hiking in Nearby Trails',
             'Relaxing Spa Day in the City',
         ]);
+
         return [
         'name' => $name,
         'description' => $faker->sentence,
-        'photo_url' => asset('..\images\activity.jpeg'),
-        'created_at' => now(),
-        'updated_at' => now(),
+        'quantity' => $faker->numberBetween(1,10),
+        'price' => $faker->randomFloat(2, 10, 100)
     ];
     }
 
