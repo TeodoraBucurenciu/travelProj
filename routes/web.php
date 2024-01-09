@@ -13,7 +13,8 @@ use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\ConfirmationController;
+use App\Http\Controllers\StripeController;
+
 
 
 use Illuminate\Support\Facades\Auth;
@@ -65,3 +66,11 @@ Route::controller(PaymentController::class)
         Route::get('cancel-payment', 'paymentCancel')->name('cancel.payment');
         Route::get('payment-success', 'paymentSuccess')->name('success.payment');
     });
+
+    Route::post('/session', [StripeController::class, 'session'])->name('session');
+    Route::get('/success', [StripeController::class, 'success'])->name('success');
+    Route::get('/cancel', [StripeController::class, 'cancel'])->name('cancel');
+Route::get('/shopping-cart', [ActivityController::class, 'activityCart'])->name('shopping.cart');
+Route::get('/activity/{id}', [ActivityController::class, 'addActivitytoCart'])->name('addactivity.to.cart');
+Route::patch('/update-shopping-cart', [ActivityController::class, 'updateCart'])->name('update.sopping.cart');
+Route::delete('/delete-cart-activity', [ActivityController::class, 'deleteactivity'])->name('delete.cart.activity');

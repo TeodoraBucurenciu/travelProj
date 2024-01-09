@@ -10,14 +10,56 @@ use App\Http\Controllers\Controller;
 class ActivityController extends Controller
 {
     public function index()
-    {
+    {  
+        $activity = Activity::all()->shuffle()->take(5);
 
-        return view('activity');
-        //$activity = Activity::all()->shuffle()->take(5);
-
-        //return view('activity', ['searchProduct' => $activity]);
+        return view('activity', ['searchProduct' => $activity]);
     }
 
+    public function activityCart()
+    {
+        return view('cart');
+    }
+
+    public function addActivitytoCart($id)
+    {
+        $activity = Activity::findOrFail($id);
+        $cart = session()->get('cart', []);
+        if(isset($cart[$id])) {
+            $cart[$id]['quantity']++;
+        } else {
+            $cart[$id] = [
+                "name" => $activity->name,
+                "quantity" => 1,
+                "price" => $activity->price,
+                "image" => $activity->image
+            ];
+        }
+        session()->put('cart', $cart);
+        return redirect()->back()->with('success', 'activity has been added to cart!');
+    }
+     
+    public function updateCart(Request $request)
+    {
+        if($request->id && $request->quantity){
+            $cart = session()->get('cart');
+            $cart[$request->id]["quantity"] = $request->quantity;
+            session()->put('cart', $cart);
+            session()->flash('success', 'activity added to cart.');
+        }
+    }
+   
+    public function deleteactivity(Request $request)
+    {
+        if($request->id) {
+            $cart = session()->get('cart');
+            if(isset($cart[$request->id])) {
+                unset($cart[$request->id]);
+                session()->put('cart', $cart);
+            }
+            session()->flash('success', 'activity successfully deleted.');
+        }
+    }
     public function search(Request $request)
     {
 
@@ -25,7 +67,7 @@ class ActivityController extends Controller
 
             $searchResults = Activity::where('name', 'like', '%' . $request->search . '%')->latest()->paginate(15);
 
-            return view('search', ['searchProduct' => $searchResults]);
+            return view('search', ['searchactivity' => $searchResults]);
         } else {
 
             return redirect()->back()->with('message', 'Empty Search');

@@ -1,52 +1,93 @@
 @extends('layouts.app')
 @section('content')
-<div class="container">
-    <h1 class="text-center">Cart Page</h1>
-    <div class="row">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th width="50%">Product</th>
-                    <th width="10%">Price</th>
-                    <th width="8%">Quantity</th>
-                    <th width="22%">Sub Total</th>
-                    <th width="10%"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @php $total = 0; @endphp
-                @if(session('cart'))
-                @foreach(session('cart') as $id => $activity)
-                @php
-                $sub_total = $activity['price'] * $activity['quantity'];
-                $total += $sub_total;
-                @endphp
-                <tr>
-                    <td>
-                        <span>{{$activity['name']}}</span>
+<table id="cart" class="table table-bordered">
+    <thead>
+        <tr>
+            <th>activity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @php $total = 0 @endphp
+        @if(session('cart'))
+            @foreach(session('cart') as $id => $details)
+                @php $total += $details['price'] * $details['quantity'] @endphp
+                <tr data-id="{{ $id }}">
+                    <td data-th="Activity">
+                        <div class="row">
+                            <div class="col-sm-3 hidden-xs"><img src="{{ asset('imgages/activity.jpeg') }}" width="100" height="100" class="img-responsive"/></div>
+                            <div class="col-sm-9">
+                                <h4 class="nomargin">{{ $details['name'] }}</h4>
+                            </div>
+                        </div>
                     </td>
-                    <td>₹{{$activity['price']}}</td>
-                    <td>{{$activity['quantity']}}</td>
-                    <td>₹{{$sub_total}}</td>
-                    <td>
-                        <a href="{{route('remove', [$id])}}" class="btn btn-danger btn-sm">X</a>
+                    <td data-th="Price">${{ $details['price'] }}</td>
+                    <td data-th="Quantity">
+                        <input type="number" value="{{ $details['quantity'] }}" class="form-control quantity cart_update" min="1" />
+                    </td>
+                    <td data-th="Subtotal" class="text-center">${{ $details['price'] * $details['quantity'] }}</td>
+                    <td class="actions" data-th="">
+                        <button class="btn btn-danger btn-sm cart_remove"><i class="fa fa-trash-o"></i> Delete</button>
                     </td>
                 </tr>
-                @endforeach
-                @endif
-            </tbody>
-            <tfoot>
-                <tr>
-                    <td>
-                        <a href="{{route('activity')}}" class="btn btn-warning">Continue Shopping</a>
+            @endforeach
+        @endif
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5" style="text-align:right;"><h3><strong>Total ${{ $total }}</strong></h3></td>
+        </tr>
+        <tr>
+            <td colspan="5" style="text-align:right;">
+                <form action="/session" method="POST">
+                <a href="{{ url('/') }}" class="btn btn-danger"> <i class="fa fa-arrow-left"></i> Continue Shopping</a>
+                <input type="hidden" name="_token" value="{{csrf_token()}}">
+                <button class="btn btn-success" type="submit" id="checkout-live-button"><i class="fa fa-money"></i> Checkout</button>
+                </form>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+@endsection
 
+@section('scripts')
+<script type="text/javascript">
+    $(".edit-cart-info").change(function(e) {
+        e.preventDefault();
+        var ele = $(this);
+        $.ajax({
+            url: '{{ route('update.sopping.cart') }}',
+            method: "patch",
+            data: {
+                _token: '{{ csrf_token() }}',
+                id: ele.parents("tr").attr("rowId"),
+            },
+            success: function(response) {
+                window.location.reload();
+            }
+        });
+    });
 
-                    </td>
-                    <td colspan="2"></td>
-                    <td><strong>Total ₹{{$total}}</strong></td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
-</div>
+    $(".delete-activity").click(function(e) {
+        e.preventDefault();
+
+        var ele = $(this);
+
+        if (confirm("Do you really want to delete?")) {
+            $.ajax({
+                url: '{{ route('delete.cart.activity')}}',
+                method: "DELETE",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: ele.parents("tr").attr("rowId")
+                },
+                success: function(response) {
+                    window.location.reload();
+                }
+            });
+        }
+    });
+</script>
 @endsection
